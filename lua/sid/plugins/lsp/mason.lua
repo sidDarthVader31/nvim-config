@@ -22,7 +22,6 @@ mason.setup()
 mason_lspconfig.setup({
   -- list of servers for mason to install
   ensure_installed = {
-    "tsserver",
     "html",
     "lua_ls",
     "emmet_ls",
@@ -30,7 +29,6 @@ mason_lspconfig.setup({
     "eslint",
     "jsonls",
     "gopls",
-    "tsserver",
     "quick_lint_js",
     "marksman",
     "pyright",

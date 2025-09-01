@@ -40,7 +40,7 @@ local on_attach = function(client, bufnr)
   keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts) -- show documentation for what is under cursor
 
   -- typescript specific keymaps (e.g. rename file and update imports)
-  if client.name == "tsserver" then
+  if client.name == "ts-ls" then
     keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
     keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>") -- organize imports
     keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>") -- remove unused variables

@@ -26,7 +26,7 @@ if not status then
 end
 
 -- add list of plugins to install
-return packer.startup(function(use)  
+return packer.startup(function(use)
   -- packer can manage itself
   use("wbthomason/packer.nvim")
 
@@ -107,6 +107,10 @@ return packer.startup(function(use)
   use("lewis6991/gitsigns.nvim") -- show line modifications on left hand side
 
   use ('rcarriga/nvim-notify')
+
+  use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+  require("toggleterm").setup()
+end }
   use("folke/noice.nvim")
   use("MunifTanjim/nui.nvim")
   use 'APZelos/blamer.nvim'
@@ -114,3 +118,5 @@ return packer.startup(function(use)
     require("packer").sync()
   end
 end)
+
+
