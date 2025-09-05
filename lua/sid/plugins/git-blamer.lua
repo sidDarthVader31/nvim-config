@@ -5,8 +5,8 @@ if not setup then
 end
 
 
-vim.g.blamer_enabled = true
-vim.g.blamer_delay = 100
+vim.g.blamer_enabled = false
+vim.g.blamer_delay = 1000
 local keymap = vim.keymap -- for conciseness
 
 keymap.set("n", "gb", "<cmd>BlamerToggle<cr>")

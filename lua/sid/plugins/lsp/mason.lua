@@ -22,20 +22,18 @@ mason.setup()
 mason_lspconfig.setup({
   -- list of servers for mason to install
   ensure_installed = {
-    "html",
-    "lua_ls",
-    "emmet_ls",
-    "dockerls",
-    "eslint",
-    "jsonls",
-    "gopls",
-    "quick_lint_js",
-    "marksman",
-    "pyright",
-    "sqlls",
-    "biome",
-    "hydra_lsp",
-    "graphql"
+    "html",           -- HTML language server
+    "lua_ls",         -- Lua language server  
+    "emmet_ls",       -- Emmet language server
+    "dockerls",       -- Docker language server
+    "ts_ls",          -- TypeScript language server (ESSENTIAL!)
+    "eslint",         -- ESLint language server
+    "jsonls",         -- JSON language server
+    "gopls",          -- Go language server
+    "marksman",       -- Markdown language server
+    "pyright",        -- Python language server
+    -- "graphql",     -- REMOVED: Not needed
+    -- "cssls",       -- REMOVED: Not needed
   },
   -- auto-install configured servers (with lspconfig)
   automatic_installation = true, -- not the same as ensure_installed

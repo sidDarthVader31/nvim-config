@@ -43,3 +43,12 @@ opt.clipboard:append("unnamedplus")
 opt.splitright = true
 opt.splitbelow = true
 opt.iskeyword:append("-")
+
+-- performance settings
+opt.updatetime = 100  -- faster completion and diagnostic updates
+opt.timeout = true
+opt.timeoutlen = 300  -- faster which-key popup
+opt.ttimeoutlen = 10  -- faster escape sequences
+opt.redrawtime = 1500
+opt.synmaxcol = 300   -- limit syntax highlighting for long lines
+opt.lazyredraw = false -- disable lazy redraw for better responsiveness

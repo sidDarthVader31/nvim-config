@@ -15,12 +15,22 @@ if not lspkind_status then
   return
 end
 
--- load vs-code like snippets from plugins (e.g. friendly-snippets)
-require("luasnip/loaders/from_vscode").lazy_load()
+-- Lazy load snippets only when completion is triggered
+vim.defer_fn(function()
+  require("luasnip/loaders/from_vscode").lazy_load()
+end, 1000)  -- Load after 1 second delay
 
 vim.opt.completeopt = "menu,menuone,noselect"
 
 cmp.setup({
+  performance = {
+    debounce = 60,        -- Much faster response
+    throttle = 30,        -- Faster throttling  
+    fetching_timeout = 150, -- Faster timeout
+    confirm_resolve_timeout = 80,
+    async_budget = 10,     -- Higher budget for async work
+    max_view_entries = 20, -- Fewer entries = faster rendering
+  },
   snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
@@ -35,12 +45,30 @@ cmp.setup({
     ["<C-e>"] = cmp.mapping.abort(), -- close completion window
     ["<CR>"] = cmp.mapping.confirm({ select = false }),
   }),
-  -- sources for autocompletion
+  -- sources for autocompletion (ordered by priority)
   sources = cmp.config.sources({
-    { name = "nvim_lsp" }, -- lsp
-    { name = "luasnip" }, -- snippets
-    { name = "buffer" }, -- text within current buffer
-    { name = "path" }, -- file system paths
+    { 
+      name = "nvim_lsp", 
+      priority = 1000,
+      max_item_count = 20,  -- Limit LSP suggestions
+      keyword_length = 2,   -- Don't trigger on single chars
+    },
+    { 
+      name = "luasnip", 
+      priority = 750,
+      max_item_count = 5,   -- Fewer snippet suggestions
+    },
+    { 
+      name = "buffer", 
+      priority = 500,
+      max_item_count = 10,  -- Limit buffer completions
+      keyword_length = 3,   -- Only on 3+ chars for buffer
+    },
+    { 
+      name = "path", 
+      priority = 250,
+      max_item_count = 5,   -- Limit path completions
+    },
   }),
   -- configure lspkind for vs-code like icons
   formatting = {

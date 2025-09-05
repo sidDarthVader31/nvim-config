@@ -1,19 +1,7 @@
-require('sid.plugins-setup')
+-- Bootstrap and setup lazy.nvim with all plugins
+require('sid.lazy-setup')
+
+-- Core configuration
 require('sid.core.options')
 require('sid.core.keymaps')
 require('sid.core.colorscheme')
-require('sid.plugins.comment')
-require("sid.plugins.nvim-tree")
-require("sid.plugins.lualine")
-require("sid.plugins.telescope")
-require("sid.plugins.nvim-cmp")
-require("sid.plugins.lsp.mason")
-require("sid.plugins.lsp.lspsaga")
-require("sid.plugins.lsp.lspconfig")
-require("sid.plugins.autopairs")
-require("sid.plugins.treesitter")
-require("sid.plugins.gitsigns")
-require("sid.plugins.noice")
-require("sid.plugins.git-blamer")
-require('sid.plugins.toggleterm')
-require('sid.plugins.catppuccin')

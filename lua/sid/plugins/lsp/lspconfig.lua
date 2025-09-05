@@ -26,11 +26,13 @@ local on_attach = function(client, bufnr)
   -- keybind options
   local opts = { noremap = true, silent = true, buffer = bufnr }
 
-  -- set keybinds
+  -- set keybinds for better cross-file navigation
   keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts) -- show definition, references
-  keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration <CR>", opts) -- got to declaration
-  keymap.set("n", "gd", "<cmd>Telescope lsp_definitions <CR>", opts) -- see definition and make edits in window
-  keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- go to implementation
+  keymap.set("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts) -- go to declaration
+  keymap.set("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts) -- go to definition (native LSP - better for cross-file)
+  keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts) -- show references
+  keymap.set("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts) -- go to implementation
+  keymap.set("n", "<leader>gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- telescope definitions as alternative
   keymap.set("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opts) -- see available code actions
   keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opts) -- smart rename
   keymap.set("n", "<leader>D", "<cmd>Lspsaga show_line_diagnostics<CR>", opts) -- show  diagnostics for line
@@ -68,6 +70,9 @@ end
 lspconfig["html"].setup({
   capabilities = capabilities,
   on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
 })
 
 -- configure typescript server with plugin
@@ -75,6 +80,9 @@ typescript.setup({
   server = {
     capabilities = capabilities,
     on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 300,
+    },
   },
 })
 
@@ -82,39 +90,121 @@ typescript.setup({
 lspconfig["emmet_ls"].setup({
   capabilities = capabilities,
   on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
   filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
 })
---golang setup 
+--golang setup with comprehensive workspace support
 lspconfig.gopls.setup({
   capabilities = capabilities,
   on_attach = on_attach,
   cmd = {"gopls"},
-  settings ={
-    gopls ={
+  flags = {
+    debounce_text_changes = 300,
+  },
+  settings = {
+    gopls = {
+      -- Enable cross-file analysis
       completeUnimported = true,
       usePlaceholders = true,
-      analyses ={
-        unusedparams = true
-
-      }
-    }
+      deepCompletion = true,
+      staticcheck = true,
+      -- Workspace settings for multi-module support
+      buildFlags = {"-tags", "integration"},
+      env = {
+        GOFLAGS = "-tags=integration",
+      },
+      -- Analysis settings
+      analyses = {
+        unusedparams = true,
+        shadow = true,
+        fieldalignment = true,
+        nilness = true,
+        unusedwrite = true,
+        useany = true,
+      },
+      -- Codelens settings
+      codelenses = {
+        gc_details = false,
+        generate = true,
+        regenerate_cgo = true,
+        run_govulncheck = true,
+        test = true,
+        tidy = true,
+        upgrade_dependency = true,
+        vendor = true,
+      },
+      -- Hints
+      hints = {
+        assignVariableTypes = true,
+        compositeLiteralFields = true,
+        compositeLiteralTypes = true,
+        constantValues = true,
+        functionTypeParameters = true,
+        parameterNames = true,
+        rangeVariableTypes = true,
+      },
+    },
   },
-  filetypes ={"go", "gomod","gowork","gotmpl"}
+  filetypes = {"go", "gomod", "gowork", "gotmpl"},
+  root_dir = lspconfig.util.root_pattern("go.work", "go.mod", ".git"),
 })
 
 
 
-lspconfig["graphql"].setup({
+-- configure JSON language server
+lspconfig["jsonls"].setup({
   capabilities = capabilities,
   on_attach = on_attach,
   flags = {
-    debounce_text_changes = 150
-  }
+    debounce_text_changes = 300,
+  },
 })
+
+-- configure ESLint language server
+lspconfig["eslint"].setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
+})
+
+-- configure Docker language server
+lspconfig["dockerls"].setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
+})
+
+-- configure Python language server
+lspconfig["pyright"].setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
+})
+
+-- configure Markdown language server
+lspconfig["marksman"].setup({
+  capabilities = capabilities,
+  on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
+})
+
 -- configure lua server (with special settings)
 lspconfig["lua_ls"].setup({
   capabilities = capabilities,
   on_attach = on_attach,
+  flags = {
+    debounce_text_changes = 300,
+  },
   settings = { -- custom settings for lua
     Lua = {
       -- make the language server recognize "vim" global
@@ -132,26 +222,6 @@ lspconfig["lua_ls"].setup({
   },
 })
 
-local function wrap_lsp_diagnostics()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local diagnostics = vim.lsp.diagnostic.get(bufnr)
-    if not diagnostics then
-        return
-    end
-
-    local max_line_length = 40  -- Set maximum line length
-    for _, diagnostic in ipairs(diagnostics) do
-        local line_length = #diagnostic.message
-        if line_length > max_line_length then
-            local wrapped_message = vim.split(diagnostic.message, '\n')
-            diagnostic.message = wrapped_message
-        end
-    end
-end
-
-lspconfig.util.default_config = vim.tbl_extend('force', lspconfig.util.default_config, {
-    handlers = {
-        ['textDocument/publishDiagnostics'] = wrap_lsp_diagnostics
-    }
-})
+-- Removed deprecated diagnostic handler that was breaking LSP
+-- Modern Neovim handles diagnostic display properly by default
 
