@@ -209,7 +209,6 @@ This configuration is designed to work seamlessly with tmux. The included `vim-t
 - Navigate between vim splits and tmux panes with `Ctrl+h/j/k/l`
 - Maintain muscle memory across terminal and editor
 
-> **Note**: Tmux configurations are in a separate `tmux/` directory (not included in this repo).
 
 ## 🐛 Troubleshooting
 
@@ -230,10 +229,9 @@ nvim
 - Install a Nerd Font for proper icon display
 
 ## 📝 Todo
-- [ ] Add tmux configuration files
+- [x] Add tmux configuration files
 - [ ] Create setup script for dependencies
-- [ ] Add more language-specific configurations
-- [ ] Document advanced customization patterns
+- [x] Add more language-specific configurations
 
 ## 🤝 Contributing
 
